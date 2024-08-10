@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+    <kcfgfile name=""/>
+
+    <group name="General">
+        <entry name="size" type="Int">
+            <default>13</default>
+        </entry>
+        <entry name="margin" type="Int">
+            <default>5</default>
+        </entry>
+        <entry name="color" type="Color">
+            <default>#FFFFFF</default>
+        </entry>
+        <entry name="bold" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="italic" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="alignHorizontalLeft" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="alignHorizontalCenter" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="alignHorizontalRight" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="alignVerticalTop" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="alignVerticalCenter" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="alignVerticalBottom" type="Bool">
+            <default>false</default>
+        </entry>
+    </group>
+</kcfg>
