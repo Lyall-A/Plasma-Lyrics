@@ -43,7 +43,8 @@ PlasmoidItem {
     property bool config_italic: Plasmoid.configuration.italic;
     property string config_placeholder: Plasmoid.configuration.placeholder;
     property string config_noLyrics: Plasmoid.configuration.noLyrics;
-    property string config_offset: Plasmoid.configuration.offset;
+    property int config_offset: Plasmoid.configuration.offset;
+    property bool config_fallback: Plasmoid.configuration.fallback;
     property bool config_alignHorizontalLeft: Plasmoid.configuration.alignHorizontalLeft;
     property bool config_alignHorizontalCenter: Plasmoid.configuration.alignHorizontalCenter;
     property bool config_alignHorizontalRight: Plasmoid.configuration.alignHorizontalRight;
@@ -60,7 +61,7 @@ PlasmoidItem {
     property string previousPlayerName: "";
 
     property string lrcQueryUrl: {
-        return queryFailed ?
+        return (queryFailed && config_fallback) ?
             `${lrclibBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist)}&album_name=${encodeURIComponent(album)}&q=${encodeURIComponent(title)}` : // Less accurate
             `${lrclibBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist)}&album_name=${encodeURIComponent(album)}`; // Accurate
     }
@@ -199,8 +200,8 @@ PlasmoidItem {
 
                 if (xhr.status !== 200 || !track?.syncedLyrics) {
                     console.log(`Failed to get lyrics for ${title}!`);
-                    if (!queryFailed) {
-                        console.log("Trying with less accurate search...");
+                    if (!queryFailed && config_fallback) {
+                        console.log("Retrying with less accurate search...");
                         queryFailed = true;
                         return getLyrics();
                     }

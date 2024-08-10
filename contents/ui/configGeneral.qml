@@ -19,6 +19,7 @@ Kirigami.FormLayout {
     property alias cfg_placeholder: placeholderTextField.text
     property alias cfg_noLyrics: noLyricsTextField.text
     property alias cfg_offset: offsetTextField.text
+    property alias cfg_fallback: fallbackCheckBox.checked
     property alias cfg_alignHorizontalLeft: alignHorizontalLeftButton.checked
     property alias cfg_alignHorizontalCenter: alignHorizontalCenterButton.checked
     property alias cfg_alignHorizontalRight: alignHorizontalRightButton.checked
@@ -83,6 +84,11 @@ Kirigami.FormLayout {
     QQC2.TextField {
         id: offsetTextField
         Kirigami.FormData.label: i18n("Lyric Offset: ")
+    }
+
+    QQC2.CheckBox {
+        id: fallbackCheckBox
+        Kirigami.FormData.label: i18n("Allow less accurate search results: ")
     }
 
     QQLayouts.RowLayout {
