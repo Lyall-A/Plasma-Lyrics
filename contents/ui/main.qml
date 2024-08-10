@@ -41,6 +41,7 @@ PlasmoidItem {
     property string config_color: Plasmoid.configuration.color;
     property bool config_bold: Plasmoid.configuration.bold;
     property bool config_italic: Plasmoid.configuration.italic;
+    property int config_fade: Plasmoid.configuration.fade;
     property string config_placeholder: Plasmoid.configuration.placeholder;
     property string config_noLyrics: Plasmoid.configuration.noLyrics;
     property int config_offset: Plasmoid.configuration.offset;
@@ -59,6 +60,7 @@ PlasmoidItem {
     property bool fetchingLyrics: false;
     property bool lyricsFound: false;
     property string previousPlayerName: "";
+    property string newText: "";
 
     property string lrcQueryUrl: {
         return (queryFailed && config_fallback) ?
@@ -87,6 +89,7 @@ PlasmoidItem {
         wrapMode: Text.Wrap
         width: parent.width - (config_margin * 2)
         height: parent.height - (config_margin * 2)
+        clip: true
         font.pixelSize: config_size
         font.bold: config_bold
         font.italic: config_italic
@@ -101,6 +104,34 @@ PlasmoidItem {
         anchors.bottom: config_alignVerticalBottom ? parent.bottom : undefined
     }
 
+    // Fade animation
+    SequentialAnimation {
+        id: textTransition
+        running: false
+
+        NumberAnimation {
+            target: lyricText
+            property: "opacity"
+            to: 0.0
+            duration: config_fade
+        }
+
+        ScriptAction {
+            script: {
+                lyricText.text = newText
+            }
+        }
+
+        NumberAnimation {
+            target: lyricText
+            property: "opacity"
+            to: 1
+            duration: config_fade
+        }
+    }
+
+    // Timers
+
     Timer {
         id: positionTimer
         interval: 100
@@ -110,8 +141,6 @@ PlasmoidItem {
             mpris2Model.currentPlayer?.updatePosition();
         }
     }
-
-    // Timers
 
     Timer {
         id: schedulerTimer
@@ -149,7 +178,7 @@ PlasmoidItem {
 
     Timer {
         id: lyricDisplayTimer
-        interval: 100
+        interval: 20
         running: false
         repeat: true
         onTriggered: {
@@ -157,14 +186,21 @@ PlasmoidItem {
                 if (lyricsList.get(i).time >= songTime && songTime >= lyricsList.get(0).time && isPlaying) {
                     const lyricLine = lyricsList.get(Math.max(0, i - 1));
                     const lyric = lyricLine?.lyric;
-                    lyricText.text = lyric || "";
+                    setText(lyric);
                     break;
-                } else lyricText.text = "";
+                } else if (!isPlaying) setText();
             }
         }
     }
 
     // Functions
+
+    // Set text
+    function setText(text = "") {
+        if (lyricText.text === text || newText === text) return;
+        newText = text;
+        textTransition.start();
+    }
 
     // Parse lyrics
     function parseLyrics(lyrics) {
@@ -187,6 +223,7 @@ PlasmoidItem {
         fetchingLyrics = true;
         const xhr = new XMLHttpRequest();
         xhr.open("GET", lrcQueryUrl);
+        xhr.setRequestHeader("User-Agent", "Plasma-Lyrics (https://github.com/Lyall-A/Plasma-Lyrics)")
         xhr.onreadystatechange = () => {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 // Finished fetching
@@ -207,7 +244,7 @@ PlasmoidItem {
                     }
                     queryFailed = true;
                     lyricsList.clear();
-                    lyricText.text = config_noLyrics;
+                    setText(config.noLyrics)
                     return;
                 }
 
@@ -239,7 +276,7 @@ PlasmoidItem {
         previousArtist = "";
         lyricsList.clear();
         queryFailed = false;
-        lyricText.text = config_placeholder;
+        setText(config_placeholder)
         lyricsFound = false;
     }
 }

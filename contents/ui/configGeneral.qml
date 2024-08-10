@@ -16,6 +16,7 @@ Kirigami.FormLayout {
     property alias cfg_color: colorButton.color
     property alias cfg_bold: boldButton.checked
     property alias cfg_italic: italicButton.checked
+    property alias cfg_fade: fadeTextField.text
     property alias cfg_placeholder: placeholderTextField.text
     property alias cfg_noLyrics: noLyricsTextField.text
     property alias cfg_offset: offsetTextField.text
@@ -69,6 +70,11 @@ Kirigami.FormLayout {
             icon.name: "format-text-italic"
             checkable: true
         }
+    }
+
+    QQC2.TextField {
+        id: fadeTextField
+        Kirigami.FormData.label: i18n("Fade: ")
     }
 
     QQC2.TextField {
