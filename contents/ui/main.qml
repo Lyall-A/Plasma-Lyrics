@@ -112,13 +112,13 @@ PlasmoidItem {
         NumberAnimation {
             target: lyricText
             property: "opacity"
-            to: 0.0
+            to: 0
             duration: config_fade
         }
 
         ScriptAction {
             script: {
-                lyricText.text = newText
+                lyricText.text = newText;
             }
         }
 
@@ -199,7 +199,7 @@ PlasmoidItem {
     function setText(text = "") {
         if (lyricText.text === text || newText === text) return;
         newText = text;
-        textTransition.start();
+        if (!textTransition.running) textTransition.start(); else lyricText.text = text;
     }
 
     // Parse lyrics
@@ -219,7 +219,7 @@ PlasmoidItem {
 
     // Get lyrics
     function getLyrics() {
-        console.log(`Getting lyrics for ${title}...`);
+        console.log(`Getting lyrics for '${title}'...`);
         fetchingLyrics = true;
         const xhr = new XMLHttpRequest();
         xhr.open("GET", lrcQueryUrl);
@@ -236,7 +236,7 @@ PlasmoidItem {
                 const track = responseJson?.[0];
 
                 if (xhr.status !== 200 || !track?.syncedLyrics) {
-                    console.log(`Failed to get lyrics for ${title}!`);
+                    console.log(`Failed to get lyrics for '${title}'!`);
                     if (!queryFailed && config_fallback) {
                         console.log("Retrying with less accurate search...");
                         queryFailed = true;
@@ -250,7 +250,7 @@ PlasmoidItem {
 
                 queryFailed = false;
                 lyricsList.clear();
-                console.log(`Got lyrics for ${title}!`);
+                console.log(`Got lyrics for '${title}'!`);
                 previousTitle = title;
                 previousArtist = artist;
                 lyricsFound = true;
