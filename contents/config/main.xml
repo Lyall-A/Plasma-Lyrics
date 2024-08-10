@@ -4,10 +4,10 @@
 
     <group name="General">
         <entry name="width" type="Int">
-            <default>100</default>
+            <default>300</default>
         </entry>
         <entry name="height" type="Int">
-            <default>100</default>
+            <default></default>
         </entry>
         <entry name="size" type="Int">
             <default>13</default>

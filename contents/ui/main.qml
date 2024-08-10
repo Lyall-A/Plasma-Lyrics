@@ -81,18 +81,20 @@ PlasmoidItem {
     // Texts
 
     Text {
-        // TODO: word wrap
         id: lyricText
         color: config_color
+        wrapMode: Text.Wrap
+        width: parent.width - (config_margin * 2)
+        height: parent.height - (config_margin * 2)
         font.pixelSize: config_size
         font.bold: config_bold
         font.italic: config_italic
         anchors.margins: config_margin
-        // anchors.horizontalCenter: parent.horizontalCenter
-        // anchors.verticalCenter: parent.verticalCenter
+        horizontalAlignment: config_alignHorizontalLeft ? Text.AlignLeft : config_alignHorizontalCenter ? Text.AlignHCenter : config_alignHorizontalRight ? Text.AlignRight : undefined
+        verticalAlignment: config_alignVerticalTop ? Text.AlignTop : config_alignVerticalCenter ? Text.AlignVCenter : config_alignVerticalBottom ? Text.AlignBottom : undefined
         anchors.left: config_alignHorizontalLeft ? parent.left : undefined
         anchors.horizontalCenter: config_alignHorizontalCenter ? parent.horizontalCenter : undefined
-        anchors.right: config_alignHorizontalRight ? parent.right : undefined
+        anchors.right: config_alignHorizontalCEnter ? parent.right : undefined
         anchors.top: config_alignVerticalTop ? parent.top : undefined
         anchors.verticalCenter: config_alignVerticalCenter ? parent.verticalCenter : undefined
         anchors.bottom: config_alignVerticalBottom ? parent.bottom : undefined
