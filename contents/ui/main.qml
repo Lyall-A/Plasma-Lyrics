@@ -41,6 +41,7 @@ PlasmoidItem {
     property bool config_bold: Plasmoid.configuration.bold;
     property bool config_italic: Plasmoid.configuration.italic;
     property string config_placeholder: Plasmoid.configuration.placeholder;
+    property string config_offset: Plasmoid.configuration.offset;
     property bool config_alignHorizontalLeft: Plasmoid.configuration.alignHorizontalLeft;
     property bool config_alignHorizontalCenter: Plasmoid.configuration.alignHorizontalCenter;
     property bool config_alignHorizontalRight: Plasmoid.configuration.alignHorizontalRight;
@@ -65,7 +66,7 @@ PlasmoidItem {
         if (position === 0) {
             return -1;
         } else {
-            return position / 1000000;
+            return (position / 1000000) - (config_offset / 1000);
         }
     }
 
