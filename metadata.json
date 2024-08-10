@@ -7,8 +7,8 @@
         ],
         "Category": "Multimedia",
         "Description": "Display song lyrics in a widget",
-        "Id": "com.github.lyall-a.lyrics",
-        "icon": "view-media-lyrics",
+        "Id": "com.github.lyall-a.plasma-lyrics",
+        "Icon": "view-media-lyrics",
         "Name": "Lyrics",
         "Website": "https://github.com/Lyall-A/Plasma-Lyrics",
         "Version": "1"

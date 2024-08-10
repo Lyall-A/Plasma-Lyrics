@@ -11,8 +11,12 @@ import org.kde.plasma.private.mpris as Mpris
 
 PlasmoidItem {
     id: root
-    width: 0;
-    height: lyricText.contentHeight;
+    width: config_width;
+    height: config_height;
+
+    preferredRepresentation: fullRepresentation
+    Layout.preferredWidth: config_width;
+    Layout.preferredHeight: config_height;
 
     Mpris.Mpris2Model {
         id: mpris2Model
@@ -29,11 +33,14 @@ PlasmoidItem {
     readonly property string lrclibBaseUrl: "https://lrclib.net";
 
     // Configs
+    property int config_width: Plasmoid.configuration.width;
+    property int config_height: Plasmoid.configuration.height;
     property int config_size: Plasmoid.configuration.size;
     property int config_margin: Plasmoid.configuration.margin;
     property string config_color: Plasmoid.configuration.color;
     property bool config_bold: Plasmoid.configuration.bold;
     property bool config_italic: Plasmoid.configuration.italic;
+    property string config_placeholder: Plasmoid.configuration.placeholder;
     property bool config_alignHorizontalLeft: Plasmoid.configuration.alignHorizontalLeft;
     property bool config_alignHorizontalCenter: Plasmoid.configuration.alignHorizontalCenter;
     property bool config_alignHorizontalRight: Plasmoid.configuration.alignHorizontalRight;
@@ -70,12 +77,15 @@ PlasmoidItem {
     // Texts
 
     Text {
+        // TODO: word wrap
         id: lyricText
         color: config_color
         font.pixelSize: config_size
         font.bold: config_bold
         font.italic: config_italic
         anchors.margins: config_margin
+        // anchors.horizontalCenter: parent.horizontalCenter
+        // anchors.verticalCenter: parent.verticalCenter
         anchors.left: config_alignHorizontalLeft ? parent.left : undefined
         anchors.horizontalCenter: config_alignHorizontalCenter ? parent.horizontalCenter : undefined
         anchors.right: config_alignHorizontalRight ? parent.right : undefined
@@ -183,7 +193,7 @@ PlasmoidItem {
                     // console.log("Failed to get lyrics!");
                     queryFailed = true;
                     lyricsList.clear();
-                    lyricText.text = "";
+                    lyricText.text = config_placeholder;
                     return;
                 }
 
@@ -215,7 +225,7 @@ PlasmoidItem {
         previousArtist = "";
         lyricsList.clear();
         queryFailed = false;
-        lyricText.text = "";
+        lyricText.text = config_placeholder;
         lyricsFound = false;
     }
 }

@@ -9,17 +9,30 @@ Kirigami.FormLayout {
     id: generalPage
     signal configurationChanged
 
+    property alias cfg_width: widthTextField.text
+    property alias cfg_height: heightTextField.text
     property alias cfg_size: sizeSpinBox.value
     property alias cfg_margin: marginSpinBox.value
     property alias cfg_color: colorButton.color
     property alias cfg_bold: boldButton.checked
     property alias cfg_italic: italicButton.checked
+    property alias cfg_placeholder: placeholderTextField.text
     property alias cfg_alignHorizontalLeft: alignHorizontalLeftButton.checked
     property alias cfg_alignHorizontalCenter: alignHorizontalCenterButton.checked
     property alias cfg_alignHorizontalRight: alignHorizontalRightButton.checked
     property alias cfg_alignVerticalTop: alignVerticalTopButton.checked
     property alias cfg_alignVerticalCenter: alignVerticalCenterButton.checked
     property alias cfg_alignVerticalBottom: alignVerticalBottomButton.checked
+
+    QQC2.TextField {
+        id: widthTextField
+        Kirigami.FormData.label: i18n("Width: ")
+    }
+
+    QQC2.TextField {
+        id: heightTextField
+        Kirigami.FormData.label: i18n("Height: ")
+    }
 
     QQC2.SpinBox {
         id: marginSpinBox
@@ -48,11 +61,16 @@ Kirigami.FormLayout {
         QQC2.Button {
             id: italicButton
             QQC2.ToolTip {
-                text: i18n("Set lyrics to Italic")
+                text: i18n("Set lyrics to italic")
             }
             icon.name: "format-text-italic"
             checkable: true
         }
+    }
+
+    QQC2.TextField {
+        id: placeholderTextField
+        Kirigami.FormData.label: i18n("Placeholder: ")
     }
 
     QQLayouts.RowLayout {
@@ -61,7 +79,7 @@ Kirigami.FormLayout {
         QQC2.Button {
             id: alignHorizontalLeftButton
             QQC2.ToolTip {
-                text: i18n("Set lyrics to bold")
+                text: i18n("Align lyrics to left horizontally")
             }
             icon.name: "align-horizontal-left"
             checkable: true
@@ -73,7 +91,7 @@ Kirigami.FormLayout {
         QQC2.Button {
             id: alignHorizontalCenterButton
             QQC2.ToolTip {
-                text: i18n("Set lyrics to Italic")
+                text: i18n("Align lyrics to center horizontally")
             }
             icon.name: "align-horizontal-center"
             checkable: true
@@ -85,7 +103,7 @@ Kirigami.FormLayout {
         QQC2.Button {
             id: alignHorizontalRightButton
             QQC2.ToolTip {
-                text: i18n("Align lyrics to right")
+                text: i18n("Align lyrics to right horizontally")
             }
             icon.name: "align-horizontal-right"
             checkable: true
@@ -102,7 +120,7 @@ Kirigami.FormLayout {
         QQC2.Button {
             id: alignVerticalTopButton
             QQC2.ToolTip {
-                text: i18n("Set lyrics to bold")
+                text: i18n("Align lyrics to top vertically")
             }
             icon.name: "align-vertical-top"
             checkable: true
@@ -114,7 +132,7 @@ Kirigami.FormLayout {
         QQC2.Button {
             id: alignVerticalCenterButton
             QQC2.ToolTip {
-                text: i18n("Set lyrics to Italic")
+                text: i18n("Align lyrics to center vertically")
             }
             icon.name: "align-vertical-center"
             checkable: true
@@ -126,7 +144,7 @@ Kirigami.FormLayout {
         QQC2.Button {
             id: alignVerticalBottomButton
             QQC2.ToolTip {
-                text: i18n("Align lyrics to right")
+                text: i18n("Align lyrics to bottom vertically")
             }
             icon.name: "align-vertical-bottom"
             checkable: true
