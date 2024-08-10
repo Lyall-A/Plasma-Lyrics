@@ -244,7 +244,7 @@ PlasmoidItem {
                     }
                     queryFailed = true;
                     lyricsList.clear();
-                    setText(config.noLyrics)
+                    setText(config_noLyrics);
                     return;
                 }
 
@@ -276,7 +276,7 @@ PlasmoidItem {
         previousArtist = "";
         lyricsList.clear();
         queryFailed = false;
-        setText(config_placeholder)
+        setText(config_placeholder);
         lyricsFound = false;
     }
 }
