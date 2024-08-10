@@ -17,6 +17,7 @@ Kirigami.FormLayout {
     property alias cfg_bold: boldButton.checked
     property alias cfg_italic: italicButton.checked
     property alias cfg_placeholder: placeholderTextField.text
+    property alias cfg_noLyrics: noLyricsTextField.text
     property alias cfg_offset: offsetTextField.text
     property alias cfg_alignHorizontalLeft: alignHorizontalLeftButton.checked
     property alias cfg_alignHorizontalCenter: alignHorizontalCenterButton.checked
@@ -71,7 +72,12 @@ Kirigami.FormLayout {
 
     QQC2.TextField {
         id: placeholderTextField
-        Kirigami.FormData.label: i18n("Placeholder: ")
+        Kirigami.FormData.label: i18n("Placeholder text: ")
+    }
+
+    QQC2.TextField {
+        id: noLyricsTextField
+        Kirigami.FormData.label: i18n("No lyrics text: ")
     }
     
     QQC2.TextField {

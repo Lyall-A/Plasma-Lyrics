@@ -27,6 +27,9 @@
         <entry name="placeholder" type="String">
             <default></default>
         </entry>
+        <entry name="noLyrics" type="String">
+            <default>No lyrics</default>
+        </entry>
         <entry name="offset" type="Int">
             <default>-250</default>
         </entry>

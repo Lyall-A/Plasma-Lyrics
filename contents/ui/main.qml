@@ -28,6 +28,7 @@ PlasmoidItem {
     property string album: mpris2Model.currentPlayer?.album ?? "";
     property string playerName: mpris2Model.currentPlayer?.objectName ?? "";
     property int position: mpris2Model.currentPlayer?.position ?? 0;
+    property bool isPlaying: mpris2Model.currentPlayer?.playbackStatus === 2 ? true : false;
 
     // Global constants
     readonly property string lrclibBaseUrl: "https://lrclib.net";
@@ -41,6 +42,7 @@ PlasmoidItem {
     property bool config_bold: Plasmoid.configuration.bold;
     property bool config_italic: Plasmoid.configuration.italic;
     property string config_placeholder: Plasmoid.configuration.placeholder;
+    property string config_noLyrics: Plasmoid.configuration.noLyrics;
     property string config_offset: Plasmoid.configuration.offset;
     property bool config_alignHorizontalLeft: Plasmoid.configuration.alignHorizontalLeft;
     property bool config_alignHorizontalCenter: Plasmoid.configuration.alignHorizontalCenter;
@@ -58,8 +60,9 @@ PlasmoidItem {
     property string previousPlayerName: "";
 
     property string lrcQueryUrl: {
-        // return `${lrclibBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist)}&album_name=${encodeURIComponent(album)}&q=${encodeURIComponent(title)}`; // Less accurate
-        return `${lrclibBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist)}&album_name=${encodeURIComponent(album)}`; // Accurate
+        return queryFailed ?
+            `${lrclibBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist)}&album_name=${encodeURIComponent(album)}&q=${encodeURIComponent(title)}` : // Less accurate
+            `${lrclibBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist)}&album_name=${encodeURIComponent(album)}`; // Accurate
     }
 
     property int songTime: {
@@ -101,7 +104,7 @@ PlasmoidItem {
         running: true
         repeat: true
         onTriggered: {
-            mpris2Model.currentPlayer.updatePosition();
+            mpris2Model.currentPlayer?.updatePosition();
         }
     }
 
@@ -113,12 +116,14 @@ PlasmoidItem {
         running: true
         repeat: true
         onTriggered: {
+            // Player change
             if (previousPlayerName !== playerName) {
-                // console.log(`Player changed from ${previousPlayerName || "nothing"} to ${playerName || "nothing"}`);
+                console.log(`Player changed from ${previousPlayerName || "nothing"} to ${playerName || "nothing"}`);
                 previousPlayerName = playerName;
                 reset();
             }
 
+            // Track change
             if (title !== previousTitle || artist !== previousArtist) {
                 reset();
                 previousTitle = title;
@@ -146,12 +151,12 @@ PlasmoidItem {
         repeat: true
         onTriggered: {
             for (let i = 0; i < lyricsList.count; i++) {
-                if (lyricsList.get(i).time >= songTime && songTime >= lyricsList.get(0).time) {
+                if (lyricsList.get(i).time >= songTime && songTime >= lyricsList.get(0).time && isPlaying) {
                     const lyricLine = lyricsList.get(Math.max(0, i - 1));
                     const lyric = lyricLine?.lyric;
                     lyricText.text = lyric || "";
                     break;
-                }
+                } else lyricText.text = "";
             }
         }
     }
@@ -175,8 +180,8 @@ PlasmoidItem {
 
     // Get lyrics
     function getLyrics() {
+        console.log(`Getting lyrics for ${title}...`);
         fetchingLyrics = true;
-        // console.log("Fetching lyrics...");
         const xhr = new XMLHttpRequest();
         xhr.open("GET", lrcQueryUrl);
         xhr.onreadystatechange = () => {
@@ -191,16 +196,21 @@ PlasmoidItem {
                 const track = responseJson?.[0];
 
                 if (xhr.status !== 200 || !track?.syncedLyrics) {
-                    // console.log("Failed to get lyrics!");
+                    console.log(`Failed to get lyrics for ${title}!`);
+                    if (!queryFailed) {
+                        console.log("Trying with less accurate search...");
+                        queryFailed = true;
+                        return getLyrics();
+                    }
                     queryFailed = true;
                     lyricsList.clear();
-                    lyricText.text = config_placeholder;
+                    lyricText.text = config_noLyrics;
                     return;
                 }
 
                 queryFailed = false;
                 lyricsList.clear();
-                // console.log("Fetched lyrics!");
+                console.log(`Got lyrics for ${title}!`);
                 previousTitle = title;
                 previousArtist = artist;
                 lyricsFound = true;
