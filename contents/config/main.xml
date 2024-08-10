@@ -31,7 +31,7 @@
             <default>No lyrics</default>
         </entry>
         <entry name="offset" type="Int">
-            <default>-250</default>
+            <default>-500</default>
         </entry>
         <entry name="fallback" type="Bool">
             <default>false</default>
