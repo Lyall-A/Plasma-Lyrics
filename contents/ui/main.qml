@@ -196,7 +196,7 @@ PlasmoidItem {
     // Set text
     function setText(text = "") {
         if (newText === text) return;
-        console.log(`Setting text to '${text}'`);
+        // console.log(`Setting text to '${text}'`);
         newText = text;
         if (!textTransition.running) textTransition.start(); else lyricText.text = text;
     }
