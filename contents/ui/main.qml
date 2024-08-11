@@ -64,8 +64,8 @@ PlasmoidItem {
 
     property string lrcQueryUrl: {
         return (queryFailed && config_fallback) ?
-            `${lrclibBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist)}&album_name=${encodeURIComponent(album)}&q=${encodeURIComponent(title)}` : // Less accurate
-            `${lrclibBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist)}&album_name=${encodeURIComponent(album)}`; // Accurate
+            `${lrclibBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist.replace(" - Topic", ""))}&album_name=${encodeURIComponent(album)}&q=${encodeURIComponent(title)}` : // Less accurate
+            `${lrclibBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist.replace(" - Topic", ""))}&album_name=${encodeURIComponent(album)}`; // Accurate
     }
 
     property int songTime: {
@@ -160,7 +160,7 @@ PlasmoidItem {
                 reset();
                 previousTitle = title;
                 previousArtist = artist;
-                mainTimer.start();
+                if (title !== "Advertisement") mainTimer.start();
             }
         }
     }
