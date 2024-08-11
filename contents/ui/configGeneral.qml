@@ -17,7 +17,7 @@ Kirigami.FormLayout {
     property alias cfg_bold: boldButton.checked
     property alias cfg_italic: italicButton.checked
     property alias cfg_fade: fadeTextField.text
-    property alias cfg_placeholder: placeholderTextField.text
+    property alias cfg_noMedia: noMediaTextField.text
     property alias cfg_noLyrics: noLyricsTextField.text
     property alias cfg_offset: offsetTextField.text
     property alias cfg_fallback: fallbackCheckBox.checked
@@ -78,8 +78,8 @@ Kirigami.FormLayout {
     }
 
     QQC2.TextField {
-        id: placeholderTextField
-        Kirigami.FormData.label: i18n("Placeholder text: ")
+        id: noMediaTextField
+        Kirigami.FormData.label: i18n("No media text: ")
     }
 
     QQC2.TextField {

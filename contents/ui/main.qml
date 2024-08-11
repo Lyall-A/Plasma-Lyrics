@@ -6,7 +6,6 @@ import QtQuick.Window 2.15
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.components 3.0 as PlasmaComponents
-import org.kde.plasma.plasma5support as Plasma5Support
 import org.kde.plasma.private.mpris as Mpris
 
 PlasmoidItem {
@@ -30,7 +29,7 @@ PlasmoidItem {
     property int position: mpris2Model.currentPlayer?.position ?? 0;
     property bool isPlaying: mpris2Model.currentPlayer?.playbackStatus === 2 ? true : false;
 
-    // Global constants
+    // Constants
     readonly property string apiBaseUrl: "https://lrclib.net";
 
     // Configs
@@ -42,7 +41,7 @@ PlasmoidItem {
     property bool config_bold: Plasmoid.configuration.bold;
     property bool config_italic: Plasmoid.configuration.italic;
     property int config_fade: Plasmoid.configuration.fade;
-    property string config_placeholder: Plasmoid.configuration.placeholder;
+    property string config_noMedia: Plasmoid.configuration.noMedia;
     property string config_noLyrics: Plasmoid.configuration.noLyrics;
     property int config_offset: Plasmoid.configuration.offset;
     property bool config_fallback: Plasmoid.configuration.fallback;
@@ -57,7 +56,6 @@ PlasmoidItem {
     property string previousTitle: "";
     property string previousArtist: "";
     property int queryFailed: 0;
-    property bool fetchingLyrics: false;
     property string previousPlayerName: "";
     property string newText: "";
 
@@ -151,8 +149,8 @@ PlasmoidItem {
     }
 
     Timer {
-        id: schedulerTimer
-        interval: 100
+        id: mainTimer
+        interval: 20
         running: true
         repeat: true
         onTriggered: {
@@ -171,6 +169,9 @@ PlasmoidItem {
                 if (title === "Advertisement") return;
                 getLyrics();
             }
+
+            if (!isPlaying) setText(config_noMedia);
+            if (isPlaying && !lyricsList.count && queryFailed > 0) setText(config_noLyrics);
         }
     }
 
@@ -186,7 +187,7 @@ PlasmoidItem {
                     const lyric = lyricLine?.lyric;
                     setText(lyric);
                     break;
-                } else if (!isPlaying) setText();
+                }
             }
         }
     }
@@ -213,7 +214,8 @@ PlasmoidItem {
             if (!time) continue; // Don't add if time is 0
             lyricsList.append({ time, lyric });
         }
-
+        
+        setText();
         lyricDisplayTimer.start();
     }
 
@@ -234,7 +236,6 @@ PlasmoidItem {
 
         // Get using API
         console.log(`Getting lyrics for '${title}'...`);
-        fetchingLyrics = true;
 
         const xhr = new XMLHttpRequest();
         xhr.open("GET", lyricQueryUrl);
@@ -242,7 +243,6 @@ PlasmoidItem {
         xhr.onreadystatechange = () => {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 // Finished fetching
-                fetchingLyrics = false;
 
                 // Try parse JSON
                 let responseJson;
@@ -260,7 +260,7 @@ PlasmoidItem {
                         console.log("Retrying with less accurate search...");
                         return getLyrics();
                     }
-                    setText(config_noLyrics);
+                    
                     return;
                 }
 
@@ -289,6 +289,6 @@ PlasmoidItem {
         previousArtist = "";
         lyricsList.clear();
         queryFailed = 0;
-        setText(config_placeholder);
+        setText(config_noMedia);
     }
 }

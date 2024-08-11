@@ -27,7 +27,7 @@
         <entry name="fade" type="Int">
             <default>150</default>
         </entry>
-        <entry name="placeholder" type="String">
+        <entry name="noMedia" type="String">
             <default></default>
         </entry>
         <entry name="noLyrics" type="String">
