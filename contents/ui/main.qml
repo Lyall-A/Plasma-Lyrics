@@ -56,9 +56,8 @@ PlasmoidItem {
     // Variables
     property string previousTitle: "";
     property string previousArtist: "";
-    property bool queryFailed: false;
+    property int queryFailed: 0;
     property bool fetchingLyrics: false;
-    property bool lyricsFound: false;
     property string previousPlayerName: "";
     property string newText: "";
 
@@ -79,6 +78,11 @@ PlasmoidItem {
     // List of current lyrics
     ListModel {
         id: lyricsList
+    }
+
+    // List of cached lyrics
+    ListModel {
+        id: tracksList
     }
 
     // Texts
@@ -160,7 +164,8 @@ PlasmoidItem {
                 reset();
                 previousTitle = title;
                 previousArtist = artist;
-                if (title !== "Advertisement") mainTimer.start();
+                if (title === "Advertisement") return;
+                mainTimer.start();
             }
         }
     }
@@ -171,7 +176,7 @@ PlasmoidItem {
         running: false
         repeat: true
         onTriggered: {
-            if (lyricsFound || queryFailed || fetchingLyrics) return;
+            if (lyricsList.count || queryFailed || fetchingLyrics) return;
             getLyrics();
         }
     }
@@ -204,6 +209,7 @@ PlasmoidItem {
 
     // Parse lyrics
     function parseLyrics(lyrics) {
+        lyricsList.clear();
         const parsedLyrics = lyrics.split("\n");
         // console.log(`Got ${parsedLyrics.length} lines`);
         for (let i = 0; i < parsedLyrics.length; i++) {
@@ -219,42 +225,56 @@ PlasmoidItem {
 
     // Get lyrics
     function getLyrics() {
+        // Check for already existing track (cached)
+        let foundTrack = false;
+        for (let i = 0; i < tracksList.count; i++) {
+            const track = tracksList.get(i);
+            if (track.title === title && track.artist === artist && track.album === album) {
+                foundTrack = true;
+                console.log(`Got existing lyrics for '${title}'!`);
+                parseLyrics(track.syncedLyrics);
+            }
+        }
+
+        if (foundTrack) return;
+
+        // Get using API
         console.log(`Getting lyrics for '${title}'...`);
         fetchingLyrics = true;
+
         const xhr = new XMLHttpRequest();
         xhr.open("GET", lrcQueryUrl);
-        xhr.setRequestHeader("User-Agent", "Plasma-Lyrics (https://github.com/Lyall-A/Plasma-Lyrics)")
+        xhr.setRequestHeader("User-Agent", "Plasma-Lyrics (https://github.com/Lyall-A/Plasma-Lyrics)");
         xhr.onreadystatechange = () => {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 // Finished fetching
                 fetchingLyrics = false;
 
+                // Try parse JSON
                 let responseJson;
                 try {
                     responseJson = JSON.parse(xhr.responseText);
                 } catch (err) { };
                 const track = responseJson?.[0];
+                const syncedLyrics = track?.syncedLyrics;
 
-                if (xhr.status !== 200 || !track?.syncedLyrics) {
+                if (xhr.status !== 200 || !syncedLyrics) {
+                    // Failed (no synced lyrics)
                     console.log(`Failed to get lyrics for '${title}'!`);
-                    if (!queryFailed && config_fallback) {
+                    if (queryFailed === 0 && config_fallback) {
                         console.log("Retrying with less accurate search...");
                         queryFailed = true;
                         return getLyrics();
                     }
-                    queryFailed = true;
-                    lyricsList.clear();
+                    queryFailed++;
                     setText(config_noLyrics);
                     return;
                 }
 
-                queryFailed = false;
-                lyricsList.clear();
+                // Got synced lyrics
                 console.log(`Got lyrics for '${title}'!`);
-                previousTitle = title;
-                previousArtist = artist;
-                lyricsFound = true;
-                parseLyrics(track.syncedLyrics);
+                tracksList.append({ title, artist, album, syncedLyrics });
+                parseLyrics(syncedLyrics);
             }
         }
 
@@ -271,12 +291,12 @@ PlasmoidItem {
 
     // Reset
     function reset() {
+        console.log("Resetting");
         mainTimer.stop();
         previousTitle = "";
         previousArtist = "";
         lyricsList.clear();
-        queryFailed = false;
+        queryFailed = 0;
         setText(config_placeholder);
-        lyricsFound = false;
     }
 }
