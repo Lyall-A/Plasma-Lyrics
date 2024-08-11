@@ -31,7 +31,7 @@ PlasmoidItem {
     property bool isPlaying: mpris2Model.currentPlayer?.playbackStatus === 2 ? true : false;
 
     // Global constants
-    readonly property string lrclibBaseUrl: "https://lrclib.net";
+    readonly property string apiBaseUrl: "https://lrclib.net";
 
     // Configs
     property int config_width: Plasmoid.configuration.width;
@@ -61,10 +61,14 @@ PlasmoidItem {
     property string previousPlayerName: "";
     property string newText: "";
 
-    property string lrcQueryUrl: {
-        return (queryFailed && config_fallback) ?
-            `${lrclibBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist.replace(" - Topic", ""))}&album_name=${encodeURIComponent(album)}&q=${encodeURIComponent(title)}` : // Less accurate
-            `${lrclibBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist.replace(" - Topic", ""))}&album_name=${encodeURIComponent(album)}`; // Accurate
+    property string lyricQueryUrl: {
+        if (queryFailed === 0 || !config_fallback) {
+            return `${apiBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist.replace(" - Topic", ""))}&album_name=${encodeURIComponent(album)}`; // Accurate
+        } else
+        if (queryFailed === 1 && config_fallback) {
+            return `${apiBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist.replace(" - Topic", ""))}&album_name=${encodeURIComponent(album)}&q=${encodeURIComponent(title)}`; // Less accurate
+        } else
+        return "";
     }
 
     property int songTime: {
@@ -80,7 +84,7 @@ PlasmoidItem {
         id: lyricsList
     }
 
-    // List of cached lyrics
+    // List of cached tracks
     ListModel {
         id: tracksList
     }
@@ -138,7 +142,7 @@ PlasmoidItem {
 
     Timer {
         id: positionTimer
-        interval: 100
+        interval: 20
         running: true
         repeat: true
         onTriggered: {
@@ -165,19 +169,8 @@ PlasmoidItem {
                 previousTitle = title;
                 previousArtist = artist;
                 if (title === "Advertisement") return;
-                mainTimer.start();
+                getLyrics();
             }
-        }
-    }
-    
-    Timer {
-        id: mainTimer
-        interval: 100
-        running: false
-        repeat: true
-        onTriggered: {
-            if (lyricsList.count || queryFailed || fetchingLyrics) return;
-            getLyrics();
         }
     }
 
@@ -243,7 +236,7 @@ PlasmoidItem {
         fetchingLyrics = true;
 
         const xhr = new XMLHttpRequest();
-        xhr.open("GET", lrcQueryUrl);
+        xhr.open("GET", lyricQueryUrl);
         xhr.setRequestHeader("User-Agent", "Plasma-Lyrics (https://github.com/Lyall-A/Plasma-Lyrics)");
         xhr.onreadystatechange = () => {
             if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -261,12 +254,11 @@ PlasmoidItem {
                 if (xhr.status !== 200 || !syncedLyrics) {
                     // Failed (no synced lyrics)
                     console.log(`Failed to get lyrics for '${title}'!`);
-                    if (queryFailed === 0 && config_fallback) {
+                    queryFailed++;
+                    if (queryFailed === 1 && config_fallback) {
                         console.log("Retrying with less accurate search...");
-                        queryFailed = true;
                         return getLyrics();
                     }
-                    queryFailed++;
                     setText(config_noLyrics);
                     return;
                 }
@@ -291,8 +283,7 @@ PlasmoidItem {
 
     // Reset
     function reset() {
-        console.log("Resetting");
-        mainTimer.stop();
+        // console.log("Resetting");
         previousTitle = "";
         previousArtist = "";
         lyricsList.clear();
