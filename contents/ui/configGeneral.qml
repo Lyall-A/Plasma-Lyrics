@@ -94,7 +94,7 @@ Kirigami.FormLayout {
 
     QQC2.CheckBox {
         id: fallbackCheckBox
-        Kirigami.FormData.label: i18n("Allow less accurate search results: ")
+        Kirigami.FormData.label: i18n("Allow less-accurate searches: ")
     }
 
     QQLayouts.RowLayout {
