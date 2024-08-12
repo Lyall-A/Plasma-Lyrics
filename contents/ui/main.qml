@@ -60,7 +60,7 @@ PlasmoidItem {
     property string newText: "";
 
     property string lyricQueryUrl: {
-        if (queryFailed === 0 || !config_fallback) return `${apiBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist.replace(" - Topic", ""))}&album_name=${encodeURIComponent(album)}`; // Accurate
+        if (queryFailed === 0) return `${apiBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist.replace(" - Topic", ""))}&album_name=${encodeURIComponent(album)}`; // Accurate
         if (queryFailed === 1) return `${apiBaseUrl}/api/search?q=${encodeURIComponent(title)}`; // Less accurate
 
         return "";
