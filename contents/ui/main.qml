@@ -60,12 +60,9 @@ PlasmoidItem {
     property string newText: "";
 
     property string lyricQueryUrl: {
-        if (queryFailed === 0 || !config_fallback) {
-            return `${apiBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist.replace(" - Topic", ""))}&album_name=${encodeURIComponent(album)}`; // Accurate
-        } else
-        if (queryFailed === 1 && config_fallback) {
-            return `${apiBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist.replace(" - Topic", ""))}&album_name=${encodeURIComponent(album)}&q=${encodeURIComponent(title)}`; // Less accurate
-        } else
+        if (queryFailed === 0 || !config_fallback) return `${apiBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist.replace(" - Topic", ""))}&album_name=${encodeURIComponent(album)}`; // Accurate
+        if (queryFailed === 1) return `${apiBaseUrl}/api/search?q=${encodeURIComponent(title)}`; // Less accurate
+
         return "";
     }
 
@@ -235,7 +232,7 @@ PlasmoidItem {
         if (foundTrack) return;
 
         // Get using API
-        console.log(`Getting lyrics for '${title}'...`);
+        if (!queryFailed) console.log(`Getting lyrics for '${title}'...`);
 
         const xhr = new XMLHttpRequest();
         xhr.open("GET", lyricQueryUrl);
@@ -254,13 +251,16 @@ PlasmoidItem {
 
                 if (xhr.status !== 200 || !syncedLyrics) {
                     // Failed (no synced lyrics)
-                    console.log(`Failed to get lyrics for '${title}'!`);
+                    if (!queryFailed) console.log(`Couldn't get lyrics for '${title}'`);
                     queryFailed++;
-                    if (queryFailed === 1 && config_fallback) {
-                        console.log("Retrying with less accurate search...");
-                        return getLyrics();
+
+                    if (lyricQueryUrl && config_fallback) {
+                        console.log(`Retrying with fallback search (x${queryFailed})...`);
+                        getLyrics();
                     }
                     
+                    if (!lyricQueryUrl && config_fallback) console.log(`Couldn't get lyrics for '${title}' with fallback search!`);
+
                     return;
                 }
 
