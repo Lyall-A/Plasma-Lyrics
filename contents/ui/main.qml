@@ -179,12 +179,13 @@ PlasmoidItem {
         repeat: true
         onTriggered: {
             for (let i = 0; i < lyricsList.count; i++) {
-                if (lyricsList.get(i).time >= songTime && songTime >= lyricsList.get(0).time && isPlaying) {
+                if (!isPlaying || lyricsList.get(i).time < songTime) continue;
+                if (songTime >= lyricsList.get(0).time) {
                     const lyricLine = lyricsList.get(Math.max(0, i - 1));
                     const lyric = lyricLine?.lyric;
                     setText(lyric);
                     break;
-                }
+                } else setText();
             }
         }
     }
