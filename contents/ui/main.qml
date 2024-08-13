@@ -167,16 +167,18 @@ PlasmoidItem {
                 // Blacklisted titles
                 if ([
                     "Advertisement", // Spotify Ads
-                    / \/ (X|Twitter)$/, // X/Twitter
-                    /^TikTok - /, // TikTok
                 ].some(match => (typeof match === "string" && match === title) || (match instanceof RegExp && match.test(title)))) return console.log(`Not getting lyrics for '${title}' (blacklisted title)!`);
                 
                 // Blacklisted artists
                 if ([
                     "DJ X", // Spotify DJ
+                ].some(match => (typeof match === "string" && match === artist) || (match instanceof RegExp && match.test(artist)))) return console.log(`Not getting lyrics for '${title}' (blacklisted artist)!`);
+
+                // Blacklisted albums
+                if ([
                     /^https:\/\/(x|twitter).com/, // X/Twitter
                     /^https:\/\/www.tiktok.com/, // TikTok
-                ].some(match => (typeof match === "string" && match === artist) || (match instanceof RegExp && match.test(artist)))) return console.log(`Not getting lyrics for '${title}' (blacklisted artist)!`);
+                ].some(match => (typeof match === "string" && match === album) || (match instanceof RegExp && match.test(album)))) return console.log(`Not getting lyrics for '${title}' (blacklisted album)!`);
                 
                 getLyrics();
             }
