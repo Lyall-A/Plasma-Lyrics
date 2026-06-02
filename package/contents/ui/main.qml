@@ -30,34 +30,29 @@ PlasmoidItem {
     }
 
     // Constants
-    readonly property string apiBaseUrl: 'https://lrclib.net'
+    readonly property string apiBaseUrl: Plasmoid.configuration.apiBaseUrl
     readonly property string apiUserAgent: 'Plasma-Lyrics (https://github.com/Lyall-A/Plasma-Lyrics)'
     readonly property string timerInterval: 1000 / 30 // 30 times a second
     readonly property bool debug: false
     readonly property var blacklist: ({
-        title: [
-            'Advertisement', // Spotify Ads
-            / \/ (X|Twitter)$/, // X/Twitter
-            /^TikTok - /, // TikTok
-            'A site is playing media', // Brave private window (maybe other chromium browsers as well?)
-        ],
-        album: [
-            /^https:\/\/(x|twitter).com/, // X/Twitter
-            /^https:\/\/www.tiktok.com/, // TikTok
-        ],
-        artist: [
-            'DJ X', // Spotify DJ
-        ]
-    })
+            title: ['Advertisement' // Spotify Ads
+                , / \/ (X|Twitter)$/ // X/Twitter
+                , /^TikTok - / // TikTok
+                , 'A site is playing media', // Brave private window (maybe other chromium browsers as well?)
+            ],
+            album: [/^https:\/\/(x|twitter).com/ // X/Twitter
+                , /^https:\/\/www.tiktok.com/, // TikTok
+            ],
+            artist: ['DJ X', // Spotify DJ
+            ]
+        })
     readonly property var replacement: ({
-        title: [
-            [/ \| YouTube Music$/, ''] // YouTube Music suffix
-        ],
-        album: [],
-        artist: [
-            [/ - Topic$/, ''] // YouTube Topic channels
-        ]
-    })
+            title: [[/ \| YouTube Music$/, ''] // YouTube Music suffix
+            ],
+            album: [],
+            artist: [[/ - Topic$/, ''] // YouTube Topic channels
+            ]
+        })
 
     // Player info
     readonly property string title: replacement.title.reduce((title, [pattern, value]) => title.replace(pattern, value), mpris2Model.currentPlayer?.track || '')
@@ -104,9 +99,12 @@ PlasmoidItem {
     property int currentLyricIndex: 0
     property int failedAttempts: 0
     property string lyricsUrl: {
-        if (failedAttempts === 0) return `${apiBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&album_name=${encodeURIComponent(album)}&artist_name=${encodeURIComponent(artist)}`;
-        if (failedAttempts === 1) return `${apiBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist)}`;
-        if (failedAttempts === 2 && allowSearch) return `${apiBaseUrl}/api/search?q=${encodeURIComponent(title)}`;
+        if (failedAttempts === 0)
+            return `${apiBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&album_name=${encodeURIComponent(album)}&artist_name=${encodeURIComponent(artist)}`;
+        if (failedAttempts === 1)
+            return `${apiBaseUrl}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist)}`;
+        if (failedAttempts === 2 && allowSearch)
+            return `${apiBaseUrl}/api/search?q=${encodeURIComponent(title)}`;
 
         return '';
     }
@@ -125,16 +123,8 @@ PlasmoidItem {
         id: lyricText
         color: fontColor
         wrapMode: Text.Wrap
-        horizontalAlignment:
-            horizontalAlignLeft ? Text.AlignLeft :
-            horizontalAlignCenter ? Text.AlignHCenter :
-            horizontalAlignRight ? Text.AlignRight :
-            undefined
-        verticalAlignment:
-            verticalAlignTop ? Text.AlignTop :
-            verticalAlignCenter ? Text.AlignVCenter :
-            verticalAlignBottom ? Text.AlignBottom :
-            undefined
+        horizontalAlignment: horizontalAlignLeft ? Text.AlignLeft : horizontalAlignCenter ? Text.AlignHCenter : horizontalAlignRight ? Text.AlignRight : undefined
+        verticalAlignment: verticalAlignTop ? Text.AlignTop : verticalAlignCenter ? Text.AlignVCenter : verticalAlignBottom ? Text.AlignBottom : undefined
         font.pixelSize: fontSize
         font.bold: fontBold
         font.italic: fontItalic
@@ -184,7 +174,7 @@ PlasmoidItem {
         repeat: true
         onTriggered: {
             mpris2Model.currentPlayer?.updatePosition(); // Update MPRIS
-            
+
             // Player changed (doesn't do anything)
             if (previousPlayerName !== playerName) {
                 console.log(`Player changed from ${previousPlayerName || 'nothing'} to ${playerName || 'nothing'}`);
@@ -198,12 +188,16 @@ PlasmoidItem {
                 failedAttempts = 0;
                 lyricsList.clear();
 
-                if (!title) return;
-                
+                if (!title)
+                    return;
+
                 // Blacklisted
-                if (matchString(blacklist.title, title)) return console.log(`Not getting lyrics for '${title}' (blacklisted title)`);
-                if (matchString(blacklist.album, album)) return console.log(`Not getting lyrics for '${title}' (blacklisted album)`);
-                if (matchString(blacklist.artist, artist)) return console.log(`Not getting lyrics for '${title}' (blacklisted artist)`);
+                if (matchString(blacklist.title, title))
+                    return console.log(`Not getting lyrics for '${title}' (blacklisted title)`);
+                if (matchString(blacklist.album, album))
+                    return console.log(`Not getting lyrics for '${title}' (blacklisted album)`);
+                if (matchString(blacklist.artist, artist))
+                    return console.log(`Not getting lyrics for '${title}' (blacklisted artist)`);
 
                 updateLyrics();
             }
@@ -220,12 +214,16 @@ PlasmoidItem {
             } else {
                 // Media playing and lyrics available
                 for (let lyricIndex = lyricsList.count - 1; lyricIndex >= 0; lyricIndex--) {
-                    const { time, lyric } = lyricsList.get(lyricIndex);
+                    const {
+                        time,
+                        lyric
+                    } = lyricsList.get(lyricIndex);
                     if ((position - offset) >= time) {
                         setText(lyric, currentLyricIndex !== lyricIndex);
                         currentLyricIndex = lyricIndex;
                         break;
-                    } else if (lyricIndex === 0) setText(); // Too early
+                    } else if (lyricIndex === 0)
+                        setText(); // Too early
                 }
             }
         }
@@ -234,15 +232,18 @@ PlasmoidItem {
     // Functions
 
     function setText(text = '', repeatTransition = false) {
-        if (currentLyricText === text && !repeatTransition) return;
+        if (currentLyricText === text && !repeatTransition)
+            return;
         logDebug(`Setting text to '${text}'`);
         currentLyricText = text;
-        if (!textTransition.running) textTransition.start(); else lyricText.text = text;
+        if (!textTransition.running)
+            textTransition.start();
+        else
+            lyricText.text = text;
     }
 
     function matchString(array, value) {
-        return array.some(match =>
-            (typeof match === 'string' && match === value) || // String matches
+        return array.some(match => (typeof match === 'string' && match === value) || // String matches
             (match instanceof RegExp && match.test(value)) // Regex matches
         );
     }
@@ -255,20 +256,18 @@ PlasmoidItem {
             const time = parseTime(line.match(/\[(.*)\]/)?.[1] || '');
             const lyric = line.match(/\[.*\]\s*(.*)/)?.[1] || '';
             // if (!time) continue; // Don't add if time is 0
-            lyricsList.append({ time, lyric });
+            lyricsList.append({
+                time,
+                lyric
+            });
         }
-        
+
         // setText();
     }
 
     function updateLyrics() {
         // Check for cached track
-        const cachedTrack = failedAttempts === 0 ?
-            new Array(tracksList.count).fill().map(i => tracksList.get(i)).find(track =>
-                track.title === title &&
-                track.album === album &&
-                track.artist === artist
-            ) : undefined;
+        const cachedTrack = failedAttempts === 0 ? new Array(tracksList.count).fill().map(i => tracksList.get(i)).find(track => track.title === title && track.album === album && track.artist === artist) : undefined;
 
         if (cachedTrack) {
             console.log(`Got cached lyrics for '${title}'`);
@@ -277,7 +276,8 @@ PlasmoidItem {
 
         const url = lyricsUrl;
 
-        if (!url) return console.log(`Failed to get lyrics after ${failedAttempts} attempt(s)!`);
+        if (!url)
+            return console.log(`Failed to get lyrics after ${failedAttempts} attempt(s)!`);
 
         console.log(`Getting lyrics for '${title}' (attempt ${failedAttempts + 1})`);
         logDebug(`Fetching '${url}'`);
@@ -287,13 +287,14 @@ PlasmoidItem {
         xhr.setRequestHeader('User-Agent', apiUserAgent);
         xhr.onreadystatechange = () => {
             if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (url !== lyricsUrl) return console.log('URL changed mid-request, ignoring');
-                
+                if (url !== lyricsUrl)
+                    return console.log('URL changed mid-request, ignoring');
+
                 // Try parse JSON
                 let responseJson;
                 try {
                     responseJson = JSON.parse(xhr.responseText);
-                } catch (err) { };
+                } catch (err) {}
 
                 const track = responseJson?.find(track => track?.syncedLyrics); // Get first track that has synced lyrics
                 const lyrics = track?.syncedLyrics;
@@ -306,11 +307,16 @@ PlasmoidItem {
                 // Got synced lyrics
                 console.log(`Got lyrics for '${title}'`);
                 failedAttempts = 0;
-                tracksList.append({ title, album, artist, lyrics }); // Add to cache
+                tracksList.append({
+                    title,
+                    album,
+                    artist,
+                    lyrics
+                }); // Add to cache
                 logDebug(`Cached tracks: ${tracksList.count}`);
                 useLyrics(lyrics);
             }
-        }
+        };
         xhr.send();
     }
 
@@ -322,7 +328,8 @@ PlasmoidItem {
     }
 
     function logDebug(...msg) {
-        if (!debug) return false;
+        if (!debug)
+            return false;
         return console.log('[DEBUG]', ...msg);
     }
 }

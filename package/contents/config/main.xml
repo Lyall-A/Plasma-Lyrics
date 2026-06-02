@@ -1,6 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
-    <kcfgfile name=""/>
+<?xml version="1.0" encoding="UTF-8" ?>
+<kcfg
+    xmlns="http://www.kde.org/standards/kcfg/1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd"
+>
+    <kcfgfile name="" />
 
     <group name="General">
         <entry name="useFixedSize" type="Bool">
@@ -43,7 +47,7 @@
             <default>150</default>
         </entry>
         <entry name="noMedia" type="String">
-            <default></default>
+            <default />
         </entry>
         <entry name="noLyrics" type="String">
             <default>No lyrics</default>
@@ -71,6 +75,9 @@
         </entry>
         <entry name="verticalAlignBottom" type="Bool">
             <default>false</default>
+        </entry>
+        <entry name="apiBaseUrl" type="String">
+            <default>https://lrclib.net</default>
         </entry>
     </group>
 </kcfg>

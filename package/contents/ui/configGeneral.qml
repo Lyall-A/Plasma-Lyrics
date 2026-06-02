@@ -31,6 +31,7 @@ KCM.SimpleKCM {
     property alias cfg_verticalAlignTop: verticalAlignTopButton.checked
     property alias cfg_verticalAlignCenter: verticalAlignCenterButton.checked
     property alias cfg_verticalAlignBottom: verticalAlignBottomButton.checked
+    property alias cfg_apiBaseUrl: apiBaseUrlTextField.text
 
     Kirigami.FormLayout {
         RowLayout {
@@ -61,7 +62,7 @@ KCM.SimpleKCM {
             id: marginSpinBox
             Kirigami.FormData.label: i18n("Margin: ")
         }
-    
+
         QQC2.ComboBox {
             id: fontFamilyComboBox
             Kirigami.FormData.label: i18n("Font family: ")
@@ -72,10 +73,10 @@ KCM.SimpleKCM {
             id: fontSizeSpinBox
             Kirigami.FormData.label: i18n("Font size: ")
         }
-    
+
         RowLayout {
             Kirigami.FormData.label: i18n("Font style: ")
-    
+
             KQC2.ColorButton {
                 id: fontColorButton
                 Kirigami.FormData.label: i18n("Color: ")
@@ -97,47 +98,47 @@ KCM.SimpleKCM {
                 checkable: true
             }
         }
-    
+
         QQC2.CheckBox {
             id: useCustomBackgroundCheckBox
             Kirigami.FormData.label: i18n("Use custom background: ")
         }
-    
+
         KQC2.ColorButton {
             id: backgroundColorButton
             visible: cfg_useCustomBackground ? true : false
             Kirigami.FormData.label: i18n("Background color")
         }
-    
+
         QQC2.SpinBox {
             id: backgroundRadiusSpinBox
             visible: cfg_useCustomBackground ? true : false
             Kirigami.FormData.label: i18n("Background border radius")
         }
-    
+
         QQC2.TextField {
             id: fadeTextField
             Kirigami.FormData.label: i18n("Fade: ")
         }
-    
+
         QQC2.TextField {
             id: noMediaTextField
             Kirigami.FormData.label: i18n("No media text: ")
         }
-    
+
         QQC2.TextField {
             id: noLyricsTextField
             Kirigami.FormData.label: i18n("No lyrics text: ")
         }
-        
+
         QQC2.TextField {
             id: offsetTextField
             Kirigami.FormData.label: i18n("Lyric Offset: ")
         }
-    
+
         RowLayout {
             Kirigami.FormData.label: i18n("Search fallback (inaccurate): ")
-            
+
             QQC2.CheckBox {
                 id: allowSearchCheckBox
             }
@@ -158,10 +159,10 @@ KCM.SimpleKCM {
                 toolTipText: i18n("Ignores featured artists while searching for lyrics")
             }
         }
-    
+
         RowLayout {
             Kirigami.FormData.label: i18n("Horizontal alignment: ")
-    
+
             QQC2.Button {
                 id: horizontalAlignLeftButton
                 QQC2.ToolTip {
@@ -170,8 +171,8 @@ KCM.SimpleKCM {
                 icon.name: "align-horizontal-left"
                 checkable: true
                 onClicked: {
-                    cfg_horizontalAlignCenter = false
-                    cfg_horizontalAlignRight = false
+                    cfg_horizontalAlignCenter = false;
+                    cfg_horizontalAlignRight = false;
                 }
             }
             QQC2.Button {
@@ -182,8 +183,8 @@ KCM.SimpleKCM {
                 icon.name: "align-horizontal-center"
                 checkable: true
                 onClicked: {
-                    cfg_horizontalAlignLeft = false
-                    cfg_horizontalAlignRight = false
+                    cfg_horizontalAlignLeft = false;
+                    cfg_horizontalAlignRight = false;
                 }
             }
             QQC2.Button {
@@ -194,15 +195,15 @@ KCM.SimpleKCM {
                 icon.name: "align-horizontal-right"
                 checkable: true
                 onClicked: {
-                    cfg_horizontalAlignLeft = false
-                    cfg_horizontalAlignCenter = false
+                    cfg_horizontalAlignLeft = false;
+                    cfg_horizontalAlignCenter = false;
                 }
             }
         }
-    
+
         RowLayout {
             Kirigami.FormData.label: i18n("Vertical alignment: ")
-    
+
             QQC2.Button {
                 id: verticalAlignTopButton
                 QQC2.ToolTip {
@@ -211,8 +212,8 @@ KCM.SimpleKCM {
                 icon.name: "align-vertical-top"
                 checkable: true
                 onClicked: {
-                    cfg_verticalAlignCenter = false
-                    cfg_verticalAlignBottom = false
+                    cfg_verticalAlignCenter = false;
+                    cfg_verticalAlignBottom = false;
                 }
             }
             QQC2.Button {
@@ -223,8 +224,8 @@ KCM.SimpleKCM {
                 icon.name: "align-vertical-center"
                 checkable: true
                 onClicked: {
-                    cfg_verticalAlignTop = false
-                    cfg_verticalAlignBottom = false
+                    cfg_verticalAlignTop = false;
+                    cfg_verticalAlignBottom = false;
                 }
             }
             QQC2.Button {
@@ -235,10 +236,14 @@ KCM.SimpleKCM {
                 icon.name: "align-vertical-bottom"
                 checkable: true
                 onClicked: {
-                    cfg_verticalAlignTop = false
-                    cfg_verticalAlignCenter = false
+                    cfg_verticalAlignTop = false;
+                    cfg_verticalAlignCenter = false;
                 }
             }
         }
+        QQC2.TextField {
+            id: apiBaseUrlTextField
+            Kirigami.FormData.label: i18n("URL for custom LRCLIB instance")
+        }
     }
-}       
+}
