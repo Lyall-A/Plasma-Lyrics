@@ -51,11 +51,29 @@
         <entry name="offset" type="Int">
             <default>-500</default>
         </entry>
-        <entry name="apiBaseUrl" type="String">
+        <entry name="providerPriorities" type="StringList">
             <default>https://lrclib.net</default>
+        </entry>
+        <entry name="baseUrlLrcLib" type="String">
+            <default>https://lrclib.net</default>
+        </entry>
+        <entry name="baseUrlLrcApi" type="String">
+            <default>https://api.lrc.cx</default>
+        </entry>
+        <!-- <entry name="baseUrlJellyfin" type="String">
+            <default></default>
+        </entry>
+        <entry name="baseUrlPlex" type="String">
+            <default></default>
+        </entry> -->
+        <entry name="providerPriorities" type="String">
+            <default>LRCLIB,LrcApi</default>
         </entry>
         <entry name="allowSearch" type="Bool">
             <default>false</default>
+        </entry>
+        <entry name="firstArtist" type="Bool">
+            <default>true</default>
         </entry>
         <entry name="horizontalAlignLeft" type="Bool">
             <default>false</default>
@@ -76,4 +94,10 @@
             <default>false</default>
         </entry>
     </group>
+    <!-- <group name="Appearance">
+
+    </group>
+    <group name="Advanced">
+
+    </group> -->
 </kcfg>

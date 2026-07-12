@@ -8,13 +8,46 @@ import org.kde.kcmutils as KCM
 KCM.SimpleKCM {
     property alias cfg_allowSearch: allowSearchCheckBox.checked
     property alias cfg_firstArtist: firstArtistCheckBox.checked
-    property alias cfg_apiBaseUrl: apiBaseUrlTextField.text
+    property alias cfg_baseUrlLrcLib: baseUrlLrcLibTextField.text
+    property alias cfg_baseUrlLrcApi: baseUrlLrcApiTextField.text
+    // property alias cfg_baseUrlJellyfin: baseUrlJellyfinTextField.text
+    // property alias cfg_baseUrlPlex: baseUrlPlexTextField.text
+    property alias cfg_providerPriorities: providerPrioritiesTextField.text
 
     Kirigami.FormLayout {
         QQC2.TextField {
-            id: apiBaseUrlTextField
+            id: baseUrlLrcLibTextField
             Kirigami.FormData.label: i18n("LRCLIB Base URL: ")
             placeholderText: "https://lrclib.net"
+        }
+
+        QQC2.TextField {
+            id: baseUrlLrcApiTextField
+            Kirigami.FormData.label: i18n("LrcApi Base URL: ")
+            placeholderText: "https://api.lrc.cx"
+        }
+
+        // QQC2.TextField {
+        //     id: baseUrlJellyfinTextField
+        //     Kirigami.FormData.label: i18n("Jellyfin Base URL: ")
+        // }
+
+        // QQC2.TextField {
+        //     id: baseUrlPlexTextField
+        //     Kirigami.FormData.label: i18n("Plex Base URL: ")
+        // }
+
+        // this is hopefully temporary, a dropdown type thing would be a lot better
+        RowLayout {
+            Kirigami.FormData.label: i18n("Lyric Providers")
+
+            QQC2.TextField {
+                id: providerPrioritiesTextField
+            }
+
+            Kirigami.ContextualHelpButton {
+                toolTipText: i18n("Possibly options (seperated by ','): LRCLIB, LrcApi")
+            }
         }
 
         RowLayout {
