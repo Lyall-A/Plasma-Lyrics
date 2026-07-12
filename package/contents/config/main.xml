@@ -67,7 +67,10 @@
             <default></default>
         </entry> -->
         <entry name="providerPriorities" type="String">
-            <default>LRCLIB,LrcApi</default>
+            <default>LRCLIB</default>
+        </entry>
+        <entry name="maxAttempts" type="Int">
+            <default>4</default>
         </entry>
         <entry name="allowSearch" type="Bool">
             <default>false</default>

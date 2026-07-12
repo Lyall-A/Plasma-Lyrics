@@ -13,6 +13,7 @@ KCM.SimpleKCM {
     // property alias cfg_baseUrlJellyfin: baseUrlJellyfinTextField.text
     // property alias cfg_baseUrlPlex: baseUrlPlexTextField.text
     property alias cfg_providerPriorities: providerPrioritiesTextField.text
+    property alias cfg_maxAttempts: maxAttemptsSpinBox.value
 
     Kirigami.FormLayout {
         QQC2.TextField {
@@ -39,7 +40,7 @@ KCM.SimpleKCM {
 
         // this is hopefully temporary, a dropdown type thing would be a lot better
         RowLayout {
-            Kirigami.FormData.label: i18n("Lyric Providers")
+            Kirigami.FormData.label: i18n("Lyric providers")
 
             QQC2.TextField {
                 id: providerPrioritiesTextField
@@ -48,6 +49,11 @@ KCM.SimpleKCM {
             Kirigami.ContextualHelpButton {
                 toolTipText: i18n("Possibly options (seperated by ','): LRCLIB, LrcApi")
             }
+        }
+
+        QQC2.SpinBox {
+            id: maxAttemptsSpinBox
+            Kirigami.FormData.label: i18n("Max attempts: ")
         }
 
         RowLayout {

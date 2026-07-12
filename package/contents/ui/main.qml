@@ -124,6 +124,7 @@ PlasmoidItem {
     readonly property string baseUrlLrcLib: Plasmoid.configuration.baseUrlLrcLib
     readonly property string baseUrlLrcApi: Plasmoid.configuration.baseUrlLrcApi
     readonly property string providerPriorities: Plasmoid.configuration.providerPriorities
+    readonly property int maxAttempts: Plasmoid.configuration.maxAttempts
 
     // Variables
     property string previousTitle: ''
@@ -135,6 +136,7 @@ PlasmoidItem {
     property double lastRequestDate: 0
     property int currentLyricIndex: 0
     property int currentAttempt: 0
+    property int totalAttempts: 0
 
     // Current lyrics
     ListModel {
@@ -221,6 +223,7 @@ PlasmoidItem {
                 previousTitle = title;
                 previousArtist = artist;
                 currentAttempt = 0;
+                totalAttempts = 0;
                 currentProvider = 0
                 lyricsList.clear();
 
@@ -309,18 +312,19 @@ PlasmoidItem {
         const provider = providers.find(provider => provider.name === providerPriorities.split(',')[currentProvider]);
         const requestOptions = provider.requestHandler(currentAttempt);
 
-        if (!requestOptions) {
+        if (!requestOptions || totalAttempts >= maxAttempts) {
             if (providerPriorities.split(',')[++currentProvider]) {
                 currentAttempt = 0;
                 return updateLyrics();
             } else {
                 gettingLyrics = false;
                 currentAttempt = 0;
-                return console.log(`Failed to get lyrics after ${currentAttempt} attempt(s)!`);
+                totalAttempts = 0;
+                return console.log(`Failed to get lyrics after ${totalAttempts} attempt(s)!`);
             }
         }
 
-        console.log(`Getting lyrics for '${title}' using ${provider.name} (attempt ${currentAttempt + 1})`);
+        console.log(`Getting lyrics for '${title}' using ${provider.name} (attempt ${totalAttempts + 1})`);
         logDebug(`Fetching '${requestOptions.url}'`);
 
         const requestDate = Date.now();
@@ -348,6 +352,7 @@ PlasmoidItem {
 
                 if (!lyrics) {
                     currentAttempt++;
+                    totalAttempts++;
                     return updateLyrics();
                 }
 
@@ -356,6 +361,7 @@ PlasmoidItem {
                 console.log(`Got lyrics for '${title}'`);
                 gettingLyrics = false;
                 currentAttempt = 0;
+                totalAttempts = 0;
                 tracksList.append({ title, album, artist, lyrics }); // Add to cache
                 logDebug(`Cached tracks: ${tracksList.count}`);
                 useLyrics(lyrics);
