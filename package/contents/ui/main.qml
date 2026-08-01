@@ -61,6 +61,7 @@ PlasmoidItem {
             name: 'LRCLIB',
             baseUrl: Plasmoid.configuration.baseUrlLrcLib,
             useJson: true,
+            expectedStatus: 200,
             requestHandler: (attempt) => {
                 if (attempt === 0) return { url: `${baseUrlLrcLib}/api/search?track_name=${encodeURIComponent(title)}&album_name=${encodeURIComponent(album)}&artist_name=${encodeURIComponent(artist)}` };
                 if (attempt === 1) return { url: `${baseUrlLrcLib}/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist)}` };
@@ -76,6 +77,7 @@ PlasmoidItem {
             name: 'LrcApi',
             baseUrl: Plasmoid.configuration.baseUrlLrcLib,
             useJson: false,
+            expectedStatus: 200,
             requestHandler: (attempt) => {
                 if (attempt === 0) return { url: `${baseUrlLrcApi}/lyrics?title=${encodeURIComponent(title)}&artist=${encodeURIComponent(artist)}` };
             },
@@ -349,7 +351,7 @@ PlasmoidItem {
                     } catch (err) { };
                 }
 
-                const lyrics = provider.parser(responseJson ?? responseText);
+                const lyrics = xhr.status === provider.expectedStatus && provider.parser(responseJson ?? responseText);
 
                 if (!lyrics) {
                     currentAttempt++;
