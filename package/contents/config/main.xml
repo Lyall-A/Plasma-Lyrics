@@ -67,7 +67,7 @@
             <default></default>
         </entry> -->
         <entry name="providerPriorities" type="String">
-            <default>LRCLIB,LrcApi</default>
+            <default>LRCLIB</default>
         </entry>
         <entry name="maxAttempts" type="Int">
             <default>4</default>
@@ -77,6 +77,9 @@
         </entry>
         <entry name="firstArtist" type="Bool">
             <default>true</default>
+        </entry>
+        <entry name="applications" type="String">
+            <default></default>
         </entry>
         <entry name="horizontalAlignLeft" type="Bool">
             <default>false</default>
