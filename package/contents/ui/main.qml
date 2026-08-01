@@ -31,7 +31,7 @@ PlasmoidItem {
     // Constants
     readonly property string defaultUserAgent: 'Plasma-Lyrics (https://github.com/Lyall-A/Plasma-Lyrics)'
     readonly property string timerInterval: 1000 / 30 // 30 times a second
-    readonly property bool debug: true
+    readonly property bool debug: false
     readonly property var blacklist: ({
         title: [
             'Advertisement', // Spotify Ads
@@ -92,9 +92,10 @@ PlasmoidItem {
         const artist = replacement.artist.reduce((artist, [pattern, value]) => artist.replace(pattern, value), mpris2Model.currentPlayer?.artist || '');
         return firstArtist ? artist.split(';')[0].trim() : artist;
     }
-    readonly property string playerName: mpris2Model.currentPlayer?.objectName || ''
+    readonly property string playerName: mpris2Model.currentPlayer?.identity || ''
     readonly property int position: mpris2Model.currentPlayer?.position / 1000 || 0
     readonly property bool isPlaying: mpris2Model.currentPlayer?.playbackStatus === Mpris.PlaybackStatus.Playing ? true : false
+    readonly property bool supportedPlayer: applications ? applications.toLowerCase().split(',').includes(playerName.toLowerCase()) : true // TODO: it would be nice if this searched for a player that matches the application name, instead of only checking the main player
 
     // Config
     readonly property bool useFixedSize: Plasmoid.configuration.useFixedSize
@@ -125,6 +126,7 @@ PlasmoidItem {
     readonly property string baseUrlLrcApi: Plasmoid.configuration.baseUrlLrcApi
     readonly property string providerPriorities: Plasmoid.configuration.providerPriorities
     readonly property int maxAttempts: Plasmoid.configuration.maxAttempts
+    readonly property string applications: Plasmoid.configuration.applications
 
     // Variables
     property string previousTitle: ''
@@ -227,7 +229,7 @@ PlasmoidItem {
                 currentProvider = 0
                 lyricsList.clear();
 
-                if (!title) return;
+                if (!title || !supportedPlayer) return;
 
                 // Blacklisted
                 if (matchString(blacklist.title, title)) return console.log(`Not getting lyrics for '${title}' (blacklisted title)`);
@@ -237,7 +239,7 @@ PlasmoidItem {
                 updateLyrics();
             }
 
-            if (!isPlaying) {
+            if (!isPlaying || !supportedPlayer) {
                 // No media playing
                 setText(noMedia);
             } else if (gettingLyrics) {
@@ -335,7 +337,6 @@ PlasmoidItem {
         xhr.setRequestHeader('User-Agent', provider.userAgent || defaultUserAgent);
         xhr.onreadystatechange = () => {
             if (xhr.readyState === XMLHttpRequest.DONE) {
-                console.log(requestDate, lastRequestDate)
                 if (requestDate !== lastRequestDate) return logDebug('Request is no longer relevant');
 
                 const { responseText } = xhr;

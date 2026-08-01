@@ -14,6 +14,7 @@ KCM.SimpleKCM {
     // property alias cfg_baseUrlPlex: baseUrlPlexTextField.text
     property alias cfg_providerPriorities: providerPrioritiesTextField.text
     property alias cfg_maxAttempts: maxAttemptsSpinBox.value
+    property alias cfg_applications: applicationsTextField.text
 
     Kirigami.FormLayout {
         QQC2.TextField {
@@ -47,7 +48,7 @@ KCM.SimpleKCM {
             }
 
             Kirigami.ContextualHelpButton {
-                toolTipText: i18n("Possibly options (seperated by ','): LRCLIB, LrcApi")
+                toolTipText: i18n("Possible options (seperated by ','): LRCLIB, LrcApi")
             }
         }
 
@@ -77,6 +78,19 @@ KCM.SimpleKCM {
 
             Kirigami.ContextualHelpButton {
                 toolTipText: i18n("Ignores featured artists while searching for lyrics")
+            }
+        }
+
+        // also hopefully temporary, i dont like the , seperation
+        RowLayout {
+            Kirigami.FormData.label: i18n("Applications: ")
+
+            QQC2.TextField {
+                id: applicationsTextField
+            }
+
+            Kirigami.ContextualHelpButton {
+                toolTipText: i18n("Only shows lyrics for media playing from these applications (seperated by ',')")
             }
         }
     }
